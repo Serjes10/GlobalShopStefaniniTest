@@ -1,7 +1,18 @@
-FROM python:3.8-slim-buster
-COPY /app
+FROM ubuntu:18.04
+
+RUN apt-get update \
+  && apt-get -y install tesseract-ocr \
+  && apt-get install -y python3.10 \
+  && apt-get install -y python3-pip \
+  && cd /usr/local/bin \
+  && ln -s /usr/bin/python3 python \
+  && pip3 --no-cache-dir install --upgrade pip \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY . /app
 WORKDIR /app
 
-RUN pip3 install -r requirements.txt
-COPY . .
-ENTRYPOINT flask --app app --debug run
+RUN pip install -r requirements.txt
+
+ENTRYPOINT ["python3"]
+CMD ["app.py"]

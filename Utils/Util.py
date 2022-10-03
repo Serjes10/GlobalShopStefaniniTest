@@ -1,22 +1,25 @@
 import pandas as pd
 import datetime
-from PIL import Image
 import pytesseract
-import io
 import requests
-
-
-
+import cv2
+import numpy as np
+import os
+from pathlib import Path
 def GenerateExcel(name, data):
     try:
         name =name + '_' + str(datetime.datetime.now().microsecond)
         sheet = CrearObjetoExcel(data)
         df = pd.DataFrame(sheet)
-        writer = pd.ExcelWriter(name + '.xlsx', engine='xlsxwriter')
+        if os.path.exists('C:/Productos/') == False:
+            path = Path('C:/Productos/')
+            path.mkdir(parents=True)
+        writer = pd.ExcelWriter('C:/Productos/' + name + '.xlsx', engine='xlsxwriter')
         df.to_excel(writer, sheet_name=name, index=False)
         writer.save()
         return Recorrer([{ 'codigo': 0, 'descripcion': 'El excel se genero exitosamente' }])
-    except:
+    except ValueError:
+        print(ValueError)
         return ErrorControlado('Ocurrio un error al generar el excel')
     
 def ErrorControlado(error):
@@ -45,8 +48,8 @@ def CrearObjetoExcel(data):
     return excel
 
 def Image_Scan(img_tags):
-    pytesseract.pytesseract.tesseract_cmd = 'C:\Program Files/Tesseract-OCR/tesseract.exe'
-    custom_config = r'--oem 3 --psm 12 '
+    # pytesseract.pytesseract.tesseract_cmd = 'C:\Program Files/Tesseract-OCR/tesseract.exe'
+    custom_config = r'--psm 12 '
     img_srcs = [img['src'] if img.has_attr('src') else '-' for img in img_tags]
     data = []
     for count, x in enumerate(img_srcs):
@@ -55,8 +58,10 @@ def Image_Scan(img_tags):
         df1['imgUrl'] = x
         if x != '-':
             response = requests.get(x)
-            img = Image.open(io.BytesIO(response.content))
-            text = pytesseract.image_to_string(img, lang="spa+eng", config=custom_config)
+            # img = Image.open(io.BytesIO(response.content))
+            frame = cv2.imdecode(np.frombuffer(response.content,np.uint8), cv2.IMREAD_COLOR)
+            np.asarray(frame)
+            text = pytesseract.image_to_string(frame, lang="spa+eng", config=custom_config)
             text = text.strip().split('\n\n')
             df1['imageText'] = text
         data.append(df1)

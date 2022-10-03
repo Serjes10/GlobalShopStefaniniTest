@@ -23,7 +23,8 @@ def Product(headers, enlace):
 
             productos.append(p)
         return GenerateExcel('Productos',productos)
-    except:
+    except ValueError:
+        # print(ValueError)
         return ErrorControlado('Ocurrio un error al consumir los productos')
 
 
@@ -58,7 +59,8 @@ def Get_Image_Product(headers,id):
         img = soup.find_all('img', class_="o")
         data = Image_Scan(img)  
         return Recorrer(data)  
-    except:
+    except ValueError:
+        print(ValueError)
         return ErrorControlado('Ocurrio un error interno')
 
    
