@@ -28,6 +28,7 @@ def Product(headers, enlace):
 
 
 def Producto_Gamer(headers):
+    try:
         enlace = "https://ofertas.mercadolibre.com.mx/flagship-computo-gaming#deal_print_id=3d493430-41e4-11ed-8e49-75885d2b7eae&c_id=special-normal&c_element_order=2&c_campaign=GAMING&c_uid=3d493430-41e4-11ed-8e49-75885d2b7eae"
         request = requests.get(url=enlace, headers=headers)
         soup = BeautifulSoup(request.content, 'lxml')
@@ -39,20 +40,26 @@ def Producto_Gamer(headers):
                 oferta = d.find('s', class_='price-tag ui-search-price__part ui-search-price__original-value shops__price-part price-tag__disabled')
                 original = d.find('span', class_='price-tag ui-search-price__part shops__price-part') 
                 p['nombreProducto'] = nombreProducto.string
-                p['precio'] = original.find('span', class_='price-tag-symbol').string + original.find('span', class_='price-tag-fraction').string
-                p['precioOferta'] = oferta.find('span', class_='price-tag-symbol').string + oferta.find('span', class_='price-tag-fraction').string if oferta is not None else ''
+                p['precioOriginal'] = oferta.find('span', class_='price-tag-symbol').string + oferta.find('span', class_='price-tag-fraction').string if oferta is not None else ''
+                p['precioOferta'] = original.find('span', class_='price-tag-symbol').string + original.find('span', class_='price-tag-fraction').string
                 p['sku'] = ''
 
             productos.append(p)
         return GenerateExcel('Productos_Gamer',productos)
+    except:
+        return ErrorControlado('Ocurrio un error al consumir los productos')
+
         
 def Get_Image_Product(headers,id):
-    # url = f'https://mbasic.faceboo.com/story.php?story_fbid=270140270537510&id=270140270537510'
-    enlace = f'https://mbasic.facebook.com/story.php?story_fbid={id}&id={id}'
-    request = requests.get(url=enlace, headers=headers)
-    soup = BeautifulSoup(request.content,'html.parser')
-    img = soup.find_all('img', class_="o")
-    data = Image_Scan(img)  
-    return Recorrer(data)  
+    try:
+        enlace = f'https://mbasic.facebook.com/story.php?story_fbid={id}&id={id}'
+        request = requests.get(url=enlace, headers=headers)
+        soup = BeautifulSoup(request.content,'html.parser')
+        img = soup.find_all('img', class_="o")
+        data = Image_Scan(img)  
+        return Recorrer(data)  
+    except:
+        return ErrorControlado('Ocurrio un error interno')
+
    
     
