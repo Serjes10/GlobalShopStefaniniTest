@@ -2,6 +2,7 @@ FROM ubuntu:18.04
 
 RUN apt-get update \
   && apt-get -y install tesseract-ocr \
+   && apt-get install tesseract-ocr-spa -y\
   && apt-get install -y python3.10 \
   && apt-get install -y python3-pip \
   && cd /usr/local/bin \

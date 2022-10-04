@@ -1,4 +1,4 @@
-opencv-python
+opencv-python-headless
 requests
 flask
 beautifulsoup4
@@ -6,3 +6,4 @@ pandas
 pytesseract
 lxml
 XlsxWriter
+numpy

@@ -59,9 +59,8 @@ def Get_Image_Product(headers,id):
         img = soup.find_all('img', class_="o")
         data = Image_Scan(img)  
         return Recorrer(data)  
-    except ValueError:
-        print(ValueError)
-        return ErrorControlado('Ocurrio un error interno')
+    except:
+        return ErrorControlado('Ocurrio un error interno al obtener el texto de la imagen')
 
    
     
